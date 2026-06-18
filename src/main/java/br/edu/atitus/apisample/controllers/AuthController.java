@@ -47,7 +47,7 @@ public class AuthController {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> excpetionHandler(Exception ex){
+    public ResponseEntity<String> exceptionHandler(Exception ex){
         String message = ex.getMessage().replace("\r\n", "");
         return ResponseEntity.badRequest().body(message);
     }
