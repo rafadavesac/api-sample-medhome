@@ -16,7 +16,7 @@ public class PointController {
 
     private final PointService service;
 
-    public PointController(PointService service) {
+    public PointController(PointService service) { //injeção de dependência no construtor
         this.service = service;
     }
 
@@ -29,15 +29,23 @@ public class PointController {
     @PostMapping
     public ResponseEntity<PointEntity> save(@RequestBody PointDTO dto) throws Exception{
         PointEntity point = new PointEntity();
-        BeanUtils.copyProperties(dto, point);
+        BeanUtils.copyProperties(dto, point); //copia os campos do DTO para a entidade automaticamente
         service.save(point);
         return ResponseEntity.status(201).body(point);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PointEntity> update(@PathVariable UUID id, @RequestBody PointDTO dto) throws Exception{
+        PointEntity point = new PointEntity();
+        BeanUtils.copyProperties(dto, point);
+        var updated = service.update(id, point);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable UUID id) throws Exception{
         service.deleteById(id);
-        return ResponseEntity.ok("Ponto deletado");
+        return ResponseEntity.ok("Atendimento deletado");
     }
 
     @ExceptionHandler(Exception.class)

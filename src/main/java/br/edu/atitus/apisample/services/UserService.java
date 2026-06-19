@@ -38,14 +38,23 @@ public class UserService implements UserDetailsService {
         if (newUser.getEmail() == null || newUser.getEmail().isBlank())
             throw new Exception("E-mail informado inválido!");
         newUser.setEmail(newUser.getEmail().trim().toLowerCase());
-        // TODO fazer validação do formato de e-mail
+
+        // Valida o formato do e-mail via Regex -> permite emails gmail.com ou hotmail.com
+        if (!newUser.getEmail().matches("^[^@]+@(gmail\\.com|hotmail\\.com)$"))
+            throw new Exception("E-mail inválido! Use um endereço Gmail ou Hotmail");
 
         if (repository.existsByEmail(newUser.getEmail()))
             throw new Exception("Já existe usuário cadastrado com este e-mail!");
 
         if (newUser.getPassword() == null || newUser.getPassword().length() < 8)
             throw new Exception("Password informado inválido!");
-        // TODO fazer validação de qualidade de senha
+
+        // Valida a qualidade da senha via Regex
+        // (?=.*[a-z]) → exige pelo menos uma letra minúscula
+        // (?=.*[A-Z]) → exige pelo menos uma letra maiúscula
+        // (?=.*\d)    → exige pelo menos um número
+        if (!newUser.getPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$"))
+            throw new Exception("Senha deve conter pelo menos uma letra maiúscula, uma minúscula e um número");
 
         //criptografar a senha em um hash BCrypt (a senha original nunca é salva no banco)
         newUser.setPassword(encoder.encode(newUser.getPassword()));
